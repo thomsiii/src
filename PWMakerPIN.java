@@ -8,14 +8,15 @@ import java.security.SecureRandom;
 import java.io.IOException;
 import java.sql.Time;
 import java.time.Instant;
+import java.math.*;
 
-public class pwMakerFrameMain extends JFrame implements ActionListener {
+public class PWMakerPIN extends JFrame implements ActionListener {
 
     JFrame frame;
     JPanel panel;
     JLabel titel;
     JLabel lengthText;
-    JTextField password;
+    JTextField pin;
     JButton generate;
     JCheckBox specialChar;
     JTextField lengthWindow;
@@ -27,7 +28,7 @@ public class pwMakerFrameMain extends JFrame implements ActionListener {
     JButton saveButton;
     JButton reset;
 
-    public pwMakerFrameMain() {
+    public PWMakerPIN() {
         //Creating the Frame
         frame = new JFrame("Passwort Generator");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -35,9 +36,9 @@ public class pwMakerFrameMain extends JFrame implements ActionListener {
         //Creating the panel at bottom and adding components
         panel = new JPanel(); // the panel is not visible in output
         panel.setLayout(null);
-        panel.setBackground(Color.orange);
+        panel.setBackground(Color.green);
 
-        titel = new JLabel("Passwort Generator");
+        titel = new JLabel("PIN Generator");
         titel.setForeground(Color.black);
         titel.setBounds(5, 5, 400, 60);
         Font fontTitel = new Font("Verdana", Font.ITALIC, 32);
@@ -45,7 +46,7 @@ public class pwMakerFrameMain extends JFrame implements ActionListener {
         panel.add(titel);
 
         //Generate Button
-        generate = new JButton("Passwort erstellen");
+        generate = new JButton("PIN erstellen");
         panel.add(generate);
         //Pos
         generate.setBounds(10, 285, 150, 30);
@@ -54,11 +55,11 @@ public class pwMakerFrameMain extends JFrame implements ActionListener {
         //Funktion
         generate.addActionListener(this);
 
-        password = new JTextField();
-        password.setBounds(10, 250, 465, 30);
-        panel.add(password);
+        pin = new JTextField();
+        pin.setBounds(10, 250, 465, 30);
+        panel.add(pin);
 
-        lengthText = new JLabel("Wie viele Zeichen soll das Passwort haben? ");
+        lengthText = new JLabel("Wie viele Zahlen soll die PIN haben? ");
         lengthText.setBounds(10, 75, 300, 30);
         lengthText.setForeground(Color.black);
         zeroLength = new JLabel();
@@ -72,7 +73,7 @@ public class pwMakerFrameMain extends JFrame implements ActionListener {
         lengthWindow.setBackground(Color.white);
         panel.add(lengthWindow);
 
-        websiteInfo = new JLabel("Wo wird das Passwort benutzt? ");
+        websiteInfo = new JLabel("Wo wird die PIN benutzt? ");
         websiteInfo.setBounds(10, 155, 300, 30);
         websiteInfo.setForeground(Color.black);
         websiteField = new JTextField();
@@ -80,12 +81,6 @@ public class pwMakerFrameMain extends JFrame implements ActionListener {
         websiteField.setBackground(Color.white);
         panel.add(websiteField);
         panel.add(websiteInfo);
-
-        specialChar = new JCheckBox("Special Character allowed?");
-        specialChar.setBounds(65, 110, 200, 30);
-        specialChar.setBackground(Color.lightGray);
-        specialChar.addActionListener(this);
-        panel.add(specialChar);
 
         copyButton = new JButton("Copy");
         copyButton.setBackground(Color.lightGray);
@@ -112,17 +107,6 @@ public class pwMakerFrameMain extends JFrame implements ActionListener {
         //Adding Components to the frame.
         frame.getContentPane().add(BorderLayout.CENTER, panel);
         frame.setVisible(true);
-
-        Dialog meinJDialog = new JDialog();
-        meinJDialog.setTitle("JPanel Beispiel");
-        meinJDialog.setSize(450,300);
-
-        JPanel panelRot = new JPanel();
-        panelRot.setBackground(Color.RED);
-
-        JTabbedPane tabpane = new JTabbedPane
-                (JTabbedPane.TOP,JTabbedPane.SCROLL_TAB_LAYOUT );
-        tabpane.addTab("Ich bin rot", panelRot);
     }
 
     /**
@@ -133,38 +117,28 @@ public class pwMakerFrameMain extends JFrame implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent ae) {
 
+        File file = new File("C:\\Users\\thoma\\Documents\\pinTestDoc.txt");
+
         int inputLength = Integer.parseInt(lengthWindow.getText());
 
         if (ae.getSource() == this.generate) {
             if (inputLength < 1) {
-                zeroLength.setText("Das Passwort muss mindestens die Länge 1 haben!");
-            } else if (inputLength >= 50) {
-                zeroLength.setText("Wirklich niemand braucht so ein langes Passwort!!" +
-                        " aber 50 Zeichen bekommst du :) ");
-                inputLength = 50;
+                zeroLength.setText("Die PIN muss mindestens die Länge 1 haben!");
             } else {
                 zeroLength.setText("");
                 lengthWindow.setBackground(Color.white);
             }
         }
-
-        if (ae.getSource() == this.generate && specialChar.isSelected()) {
-            password.setText(pwmaker.generateRandomPasswordspecialCharacter(inputLength));
-            textIsCopied.setText("");
-        } else if (ae.getSource() == this.generate) {
-            password.setText(pwmaker.generateRandomPassword(inputLength));
-            textIsCopied.setText("");
-        } else if (ae.getSource() == this.copyButton) {
-            Toolkit.getDefaultToolkit().getSystemClipboard().setContents(
-                    new StringSelection(password.getText()), null);
-            textIsCopied.setText("*** Passwort wurde kopiert ***");
-        } else if (specialChar.isSelected() || !specialChar.isSelected()) {
+        if (ae.getSource() == this.generate) {
+            pin.setText(String.valueOf(PinGenerator(inputLength)));
             textIsCopied.setText("");
         }
-
+        if (ae.getSource() == this.copyButton) {
+            Toolkit.getDefaultToolkit().getSystemClipboard().setContents(
+                    new StringSelection(pin.getText()), null);
+            textIsCopied.setText("*** PIN wurde kopiert ***");
+        } 
         if (ae.getSource() == this.saveButton) {
-
-            File file = new File("C:\\Users\\thoma\\Documents\\PW Manager.txt");
 
             try {
                 if (!Desktop.isDesktopSupported()) {
@@ -180,15 +154,17 @@ public class pwMakerFrameMain extends JFrame implements ActionListener {
                     if (websiteField.getText().isEmpty()) {
                         websiteField.setText("N/A");
                     }
+/* 
                     FileReader fr = new FileReader(file);
                     BufferedReader br = new BufferedReader(fr);
                     while((br.readLine()!= null)){
 
                     }
-                        FileWriter fw = new FileWriter("C:\\Users\\thoma\\Documents\\PW Manager.txt");
+*/
+                        FileWriter fw = new FileWriter(file);
                     BufferedWriter bw = new BufferedWriter(fw);
                     String passwortAusgabe = "Name: " + websiteField.getText() +
-                            "     Passwort:  " + password.getText() +
+                            "     PIN:  " + pin.getText() +
                             "     Erstellt am: " + Time.from(Instant.now());
 
                     bw.newLine();
@@ -206,59 +182,38 @@ public class pwMakerFrameMain extends JFrame implements ActionListener {
             lengthWindow.setText("");
             websiteField.setText("");
             textIsCopied.setText("");
-            password.setText("");
+            pin.setText("");
             specialChar.setSelected(false);
         }
     }
 
+    public static BigInteger PinGenerator(int len) {
+        final int[] numbersAllowed = {0,1,2,3,4,5,6,7,8,9};
 
+        //Number from Array random Index
+        SecureRandom random = new SecureRandom();
+        int randomIndex = 0; 
+        int temp =0;
+        String tempString ="";
+        String finalPin ="";
+        int finalPinInt =0;
 
-    public static class pwmaker {
-        // Method to generate a random alphanumeric password of a specific length
-        public static String generateRandomPassword(int len) {
-            // ASCII range – alphanumeric (0-9, a-z, A-Z)
-            final String onlyCharsandNumbers =
-                    "ABCDEFGHIJKLMNOPQRSTUVWXYZ" +
-                            "abcdefghijklmnopqrstuvwxyz" +
-                            "0123456789";
-
-            SecureRandom random = new SecureRandom();
-            StringBuilder sb = new StringBuilder();
-
-            // each iteration of the loop randomly chooses a character from the given
-            // ASCII range and appends it to the `StringBuilder` instance
-
-            for (int i = 0; i < len; i++) {
-                int randomIndex = random.nextInt(onlyCharsandNumbers.length());
-                sb.append(onlyCharsandNumbers.charAt(randomIndex));
-            }
-
-            return sb.toString();
+        for(int i =0; i<len;i++){
+            randomIndex = random.nextInt(numbersAllowed.length);
+            System.out.println("random Index: "+randomIndex+" i: "+i);
+            temp = numbersAllowed[randomIndex];
+            tempString = String.valueOf(temp);
+            System.out.println("temp: "+temp);
+            finalPin+= tempString;
+            System.out.println("final Pin: "+finalPin);
         }
-
-        public static String generateRandomPasswordspecialCharacter(int len) {
-            // ASCII range – alphanumeric (0-9, a-z, A-Z) and special Signs
-            final String specialCharsAllowed =
-                    "ABCDEFGHIJKLMNOPQRSTUVWXYZ" +
-                            "abcdefghijklmnopqrstuvwxyz" +
-                            "0123456789" +
-                            "!~,@%#$^*()-_=+[]{,}|;:.?";
-
-            SecureRandom random = new SecureRandom();
-            StringBuilder sb = new StringBuilder();
-
-            // each iteration of the loop randomly chooses a character from the given
-            // ASCII range and appends it to the `StringBuilder` instance
-
-            for (int i = 0; i < len; i++) {
-                int randomIndex = random.nextInt(specialCharsAllowed.length());
-                sb.append(specialCharsAllowed.charAt(randomIndex));
-            }
-            return sb.toString();
-        }
-    }
+        BigInteger pin = new BigInteger(finalPin);
+        return pin;
+}
+    
 
     public static void main(String[] args) {
-        PWMakerPIN test = new PWMakerPIN();
+        PWMakerPIN pinGenerator = new PWMakerPIN();
+
+        }
     }
-}
