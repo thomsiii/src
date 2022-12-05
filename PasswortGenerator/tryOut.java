@@ -1,68 +1,85 @@
-//import java.io.*;
+import java.io.*;
+import java.sql.Time;
 import java.util.Random;
-import java.math.BigInteger;
+import java.util.*;
+import java.time.*;
 
 
 public class tryOut {
 
-    public static BigInteger testPinGenerator(int len) {
-            final int[] numbersAllowed = {0,1,2,3,4,5,6,7,8,9};
-
-            //Number from Array random Index
-            Random random = new Random();
-            int randomIndex = 0; 
-            int temp =0;
-            String tempString ="";
-            String finalPin ="";
-            int finalPinInt =0;
-
-            for(int i =0; i<len;i++){
-                randomIndex = random.nextInt(numbersAllowed.length);
-                System.out.println("random Index: "+randomIndex+" i: "+i);
-                temp = numbersAllowed[randomIndex];
-                tempString = String.valueOf(temp);
-                System.out.println("temp: "+temp);
-                finalPin+= tempString;
-                System.out.println("final Pin: "+finalPin);
-            }
-            BigInteger pin = new BigInteger(finalPin);
-            return pin;
-    }
-
-
     public static void main(String[] args){
 
-        System.out.println("PIN ist: "+testPinGenerator(10));
+        File file = new File("C:\\Users\\thoma\\Documents\\test.txt");
 
         //      "C:\Users\thoma\Documents\test.txt"
         //      "C:\\Users\\thoma\\Documents\\PW Manager.txt"
-//        String passwortOne = "Name:     Google      "+
-//                "password:     oefgubvüouwberüogbu      "+
-//                "erstellt am:       "+Time.from(Instant.now());
-//
-//        String passwortTwo = "Name:     Facebook      "+
-//                "password:     oefgubvüouwberüogbu      "+
-//                "erstellt am:       "+Time.from(Instant.now());
+        String passwortOne = "Name:     Google      "+
+                "password:     oefgubvüouwberüogbu      "+
+                "erstellt am:       "+Time.from(Instant.now());
+            
+        String passwortTwo = "Name:     Facebook      "+
+                "password:     oefgubvüouwberüogbu      "+
+                "erstellt am:       "+Time.from(Instant.now());
 
 
-/*          try {
-            File file = new File("C:\\Users\\thoma\\Documents\\test.txt");
-
+                int lastRow  = 1;
+                String inhaltZeile ="";
+                boolean append= true;
+          try {
+            /*
             BufferedWriter bw = new BufferedWriter(new FileWriter(file));
 
-            for(int i =0; i< 10;i++) {
-                bw.write("\nZeileninhalt "+i+"\n");
+            for(int i =1; i<= 10;i++) {
+                bw.write(passwortOne+ " Zeile: " + i + "\r\n");
+            }
+            bw.close();*/
+
+            BufferedReader br = new BufferedReader(new FileReader(file));
+            
+            while((inhaltZeile = br.readLine())!=null){
+                    System.out.println(inhaltZeile);
+                    ++lastRow;
+            }
+            System.out.println("Letzte Reihe: "+lastRow);
+            br.close();
+
+        }catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        try {
+            BufferedReader br = new BufferedReader(new FileReader(file));
+
+            while((inhaltZeile = br.readLine())!=null){
+                inhaltZeile = br.readLine();
+            }
+            System.out.println("Letzte Reihe: "+lastRow);
+            br.close();
+
+            BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file, append)));
+            for(int i =0; i<=lastRow;i++) {
+                
+                if(i == lastRow){
+                bw.write(passwortTwo+"\r\n");
+                }else{
+                }
             }
             bw.close();
 
-            BufferedReader br = new BufferedReader(new FileReader(file));
-            while((br.readLine()!=null)){
-                    System.out.println(br.readLine());
+            br = new BufferedReader(new FileReader(file));
+            lastRow=1;
+            while((inhaltZeile = br.readLine())!=null){
+                    System.out.println(inhaltZeile);
+                    ++lastRow;
             }
+            System.out.println("Letzte Reihe: "+lastRow);
             br.close();
+            
+
         }catch (IOException e) {
             e.printStackTrace();
-        } */
-        
+        }
+
+
 }
 }

@@ -1,3 +1,5 @@
+package PasswortGenerator;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.datatransfer.StringSelection;
@@ -12,9 +14,9 @@ import java.math.*;
 
 public class PWMakerPIN extends JFrame implements ActionListener {
 
-    JFrame frame;
-    JPanel panel;
-    JLabel titel;
+    JFrame pinFrame;
+    JPanel pinPanel;
+    JLabel pinTitel;
     JLabel lengthText;
     JTextField pin;
     JButton generate;
@@ -27,27 +29,32 @@ public class PWMakerPIN extends JFrame implements ActionListener {
     JTextField websiteField;
     JButton saveButton;
     JButton reset;
+    JMenuItem pinMenu;
+    JMenuItem pwMaker;
 
     public PWMakerPIN() {
         //Creating the Frame
-        frame = new JFrame("Passwort Generator");
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(500, 400);
+        pinFrame = new JFrame("PIN Generator");
+        pinFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        pinFrame.setSize(550, 450);
         //Creating the panel at bottom and adding components
-        panel = new JPanel(); // the panel is not visible in output
-        panel.setLayout(null);
-        panel.setBackground(Color.green);
+        pinPanel = new JPanel(); // the panel is not visible in output
+        pinPanel.setLayout(null);
+        pinPanel.setBackground(Color.black);
 
-        titel = new JLabel("PIN Generator");
-        titel.setForeground(Color.black);
-        titel.setBounds(5, 5, 400, 60);
+        pinTitel = new JLabel("PIN Generator");
+        pinTitel.setForeground(Color.white);
+        pinTitel.setBounds(5, 5, 400, 60);
         Font fontTitel = new Font("Verdana", Font.ITALIC, 32);
-        titel.setFont(fontTitel);
-        panel.add(titel);
+        pinTitel.setFont(fontTitel);
+        pinPanel.add(pinTitel);
+
+        pinMenu = new JMenuItem("PIN Generator");
+        pinFrame.add(pinMenu);
 
         //Generate Button
         generate = new JButton("PIN erstellen");
-        panel.add(generate);
+        pinPanel.add(generate);
         //Pos
         generate.setBounds(10, 285, 150, 30);
         //Color
@@ -57,56 +64,56 @@ public class PWMakerPIN extends JFrame implements ActionListener {
 
         pin = new JTextField();
         pin.setBounds(10, 250, 465, 30);
-        panel.add(pin);
+        pinPanel.add(pin);
 
         lengthText = new JLabel("Wie viele Zahlen soll die PIN haben? ");
         lengthText.setBounds(10, 75, 300, 30);
-        lengthText.setForeground(Color.black);
+        lengthText.setForeground(Color.white);
         zeroLength = new JLabel();
         zeroLength.setForeground(Color.red);
         zeroLength.setBounds(10, 140, 500, 20);
-        panel.add(lengthText);
-        panel.add(zeroLength);
+        pinPanel.add(lengthText);
+        pinPanel.add(zeroLength);
 
         lengthWindow = new JTextField();
         lengthWindow.setBounds(10, 110, 50, 30);
         lengthWindow.setBackground(Color.white);
-        panel.add(lengthWindow);
+        pinPanel.add(lengthWindow);
 
         websiteInfo = new JLabel("Wo wird die PIN benutzt? ");
         websiteInfo.setBounds(10, 155, 300, 30);
-        websiteInfo.setForeground(Color.black);
+        websiteInfo.setForeground(Color.white);
         websiteField = new JTextField();
         websiteField.setBounds(10, 185, 300, 30);
         websiteField.setBackground(Color.white);
-        panel.add(websiteField);
-        panel.add(websiteInfo);
+        pinPanel.add(websiteField);
+        pinPanel.add(websiteInfo);
 
         copyButton = new JButton("Copy");
         copyButton.setBackground(Color.lightGray);
         copyButton.setBounds(165, 285, 100, 30);
         copyButton.addActionListener(this);
-        panel.add(copyButton);
+        pinPanel.add(copyButton);
         textIsCopied = new JLabel();
         textIsCopied.setForeground(Color.red);
         textIsCopied.setBounds(10, 230, 200, 20);
-        panel.add(textIsCopied);
+        pinPanel.add(textIsCopied);
 
         saveButton = new JButton("Speichern");
         saveButton.setBackground(Color.lightGray);
         saveButton.setBounds(270, 285, 100, 30);
         saveButton.addActionListener(this);
-        panel.add(saveButton);
+        pinPanel.add(saveButton);
 
         reset = new JButton("Reset");
         reset.setBackground(Color.lightGray);
         reset.setBounds(375, 285, 100, 30);
         reset.addActionListener(this);
-        panel.add(reset);
+        pinPanel.add(reset);
 
         //Adding Components to the frame.
-        frame.getContentPane().add(BorderLayout.CENTER, panel);
-        frame.setVisible(true);
+        pinFrame.getContentPane().add(BorderLayout.CENTER, pinPanel);
+        pinFrame.setVisible(true);
     }
 
     /**
@@ -150,17 +157,10 @@ public class PWMakerPIN extends JFrame implements ActionListener {
                     desktop.open(file);
                 try {
 
-
                     if (websiteField.getText().isEmpty()) {
                         websiteField.setText("N/A");
                     }
-/* 
-                    FileReader fr = new FileReader(file);
-                    BufferedReader br = new BufferedReader(fr);
-                    while((br.readLine()!= null)){
 
-                    }
-*/
                         FileWriter fw = new FileWriter(file);
                     BufferedWriter bw = new BufferedWriter(fw);
                     String passwortAusgabe = "Name: " + websiteField.getText() +
@@ -210,10 +210,8 @@ public class PWMakerPIN extends JFrame implements ActionListener {
         BigInteger pin = new BigInteger(finalPin);
         return pin;
 }
-    
 
     public static void main(String[] args) {
         PWMakerPIN pinGenerator = new PWMakerPIN();
-
         }
     }
