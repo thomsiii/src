@@ -35,10 +35,10 @@ public class pwMakerFrameMain extends JFrame implements ActionListener {
         //Creating the panel at bottom and adding components
         panel = new JPanel(); // the panel is not visible in output
         panel.setLayout(null);
-        panel.setBackground(Color.orange);
+        panel.setBackground(Color.black);
 
         titel = new JLabel("Passwort Generator");
-        titel.setForeground(Color.black);
+        titel.setForeground(Color.white);
         titel.setBounds(5, 5, 400, 60);
         Font fontTitel = new Font("Verdana", Font.ITALIC, 32);
         titel.setFont(fontTitel);
@@ -60,7 +60,7 @@ public class pwMakerFrameMain extends JFrame implements ActionListener {
 
         lengthText = new JLabel("Wie viele Zeichen soll das Passwort haben? ");
         lengthText.setBounds(10, 75, 300, 30);
-        lengthText.setForeground(Color.black);
+        lengthText.setForeground(Color.white);
         zeroLength = new JLabel();
         zeroLength.setForeground(Color.red);
         zeroLength.setBounds(10, 140, 500, 20);
@@ -74,7 +74,7 @@ public class pwMakerFrameMain extends JFrame implements ActionListener {
 
         websiteInfo = new JLabel("Wo wird das Passwort benutzt? ");
         websiteInfo.setBounds(10, 155, 300, 30);
-        websiteInfo.setForeground(Color.black);
+        websiteInfo.setForeground(Color.white);
         websiteField = new JTextField();
         websiteField.setBounds(10, 185, 300, 30);
         websiteField.setBackground(Color.white);
@@ -137,12 +137,11 @@ public class pwMakerFrameMain extends JFrame implements ActionListener {
 
         if (ae.getSource() == this.generate) {
             if (inputLength < 1) {
-                zeroLength.setText("Das Passwort muss mindestens die Länge 1 haben!");
-            } else if (inputLength >= 50) {
-                zeroLength.setText("Wirklich niemand braucht so ein langes Passwort!!" +
-                        " aber 50 Zeichen bekommst du :) ");
-                inputLength = 50;
-            } else {
+                zeroLength.setText("Das Passwort muss mindestens 1 und max. 40 Zeichen haben!");
+            } else if (inputLength >= 40) {
+                zeroLength.setText("Wirklich niemand braucht so ein langes Passwort!! aber 40 Zeichen sind OK");
+                inputLength = 40;
+            } else{
                 zeroLength.setText("");
                 lengthWindow.setBackground(Color.white);
             }
@@ -150,19 +149,24 @@ public class pwMakerFrameMain extends JFrame implements ActionListener {
 
         if (ae.getSource() == this.generate && specialChar.isSelected()) {
             password.setText(pwmaker.generateRandomPasswordspecialCharacter(inputLength));
-            textIsCopied.setText("");
+            textIsCopied.setForeground(Color.green);
+            textIsCopied.setText("***Passwort erstellt***");
         } else if (ae.getSource() == this.generate) {
             password.setText(pwmaker.generateRandomPassword(inputLength));
-            textIsCopied.setText("");
+            textIsCopied.setForeground(Color.green);
+            textIsCopied.setText("***Passwort erstellt***");
         } else if (ae.getSource() == this.copyButton) {
             Toolkit.getDefaultToolkit().getSystemClipboard().setContents(
                     new StringSelection(password.getText()), null);
             textIsCopied.setText("*** Passwort wurde kopiert ***");
         } else if (specialChar.isSelected() || !specialChar.isSelected()) {
+            textIsCopied.setForeground(Color.black);
             textIsCopied.setText("");
         }
 
         if (ae.getSource() == this.saveButton) {
+
+            
 
             File file = new File("C:\\Users\\thoma\\Documents\\PW Manager.txt");
 
@@ -172,34 +176,44 @@ public class pwMakerFrameMain extends JFrame implements ActionListener {
                     return;
                 }
                 Desktop desktop = Desktop.getDesktop();
-                if (file.exists())
+                if (file.exists()){
                     desktop.open(file);
-                try {
-
-
-                    if (websiteField.getText().isEmpty()) {
-                        websiteField.setText("N/A");
-                    }
-                    FileReader fr = new FileReader(file);
-                    BufferedReader br = new BufferedReader(fr);
-                    while((br.readLine()!= null)){
-
-                    }
-                        FileWriter fw = new FileWriter("C:\\Users\\thoma\\Documents\\PW Manager.txt");
-                    BufferedWriter bw = new BufferedWriter(fw);
-                    String passwortAusgabe = "Name: " + websiteField.getText() +
-                            "     Passwort:  " + password.getText() +
-                            "     Erstellt am: " + Time.from(Instant.now());
-
-                    bw.newLine();
-                    bw.write(passwortAusgabe);
-                    bw.close();
-                } catch (IOException ioe) {
-                    System.err.println(ioe);
                 }
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+
+                if (websiteField.getText().isEmpty()) {
+                        websiteField.setText("N/A");
+                }
+
+                int lastRow  = 1;
+                String inhaltZeile ="";
+                boolean append= true;
+                try {
+                    
+                    BufferedReader br = new BufferedReader(new FileReader(file));
+
+                    while((inhaltZeile = br.readLine())!=null){
+                        inhaltZeile = br.readLine();
+                    }br.close();
+
+                    String passwordFormatted = String.format("Name: %-20s password: %-30s erstellt am:  %-20s", websiteField.getText(),password.getText(), Time.from(Instant.now()));
+        
+                    BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file, append)));
+                    for(int i =0; i<=lastRow;i++) {
+                        
+                        if(i == lastRow){
+                        bw.write(passwordFormatted +"\r\n");
+                        }
+                    }
+                    bw.close();                   
+        
+                }catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+        }catch (IOException e) {
+            e.printStackTrace();
+        }
+                
         }
 
         if (ae.getSource() == this.reset) {
@@ -259,6 +273,6 @@ public class pwMakerFrameMain extends JFrame implements ActionListener {
     }
 
     public static void main(String[] args) {
-        PWMakerPIN test = new PWMakerPIN();
+        pwMakerFrameMain testPWMaker = new pwMakerFrameMain();
     }
 }

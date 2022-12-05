@@ -30,16 +30,16 @@ public class PWMakerPIN extends JFrame implements ActionListener {
 
     public PWMakerPIN() {
         //Creating the Frame
-        frame = new JFrame("Passwort Generator");
+        frame = new JFrame("PIN Generator");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(500, 400);
         //Creating the panel at bottom and adding components
         panel = new JPanel(); // the panel is not visible in output
         panel.setLayout(null);
-        panel.setBackground(Color.green);
+        panel.setBackground(Color.black);
 
         titel = new JLabel("PIN Generator");
-        titel.setForeground(Color.black);
+        titel.setForeground(Color.white);
         titel.setBounds(5, 5, 400, 60);
         Font fontTitel = new Font("Verdana", Font.ITALIC, 32);
         titel.setFont(fontTitel);
@@ -61,7 +61,7 @@ public class PWMakerPIN extends JFrame implements ActionListener {
 
         lengthText = new JLabel("Wie viele Zahlen soll die PIN haben? ");
         lengthText.setBounds(10, 75, 300, 30);
-        lengthText.setForeground(Color.black);
+        lengthText.setForeground(Color.white);
         zeroLength = new JLabel();
         zeroLength.setForeground(Color.red);
         zeroLength.setBounds(10, 140, 500, 20);
@@ -75,7 +75,7 @@ public class PWMakerPIN extends JFrame implements ActionListener {
 
         websiteInfo = new JLabel("Wo wird die PIN benutzt? ");
         websiteInfo.setBounds(10, 155, 300, 30);
-        websiteInfo.setForeground(Color.black);
+        websiteInfo.setForeground(Color.white);
         websiteField = new JTextField();
         websiteField.setBounds(10, 185, 300, 30);
         websiteField.setBackground(Color.white);
